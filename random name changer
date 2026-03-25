@@ -1,0 +1,99 @@
+@echo off
+setlocal
+
+:: ==========================================
+:: 설정 부분
+:: TRACK_FILE: 원래 이름을 기억해둘 임시 텍스트 파일 이름
+:: ==========================================
+set "TRACK_FILE=.tracker_original_name.txt"
+set "BAT_FILE=%~nx0"
+
+:: ==========================================
+:: 대상 폴더 및 고정 이름 지정
+:: 형식: call :ProcessFolder "폴더경로" "고정이름"
+:: ==========================================
+call :ProcessFolder "C:\테스트\폴더1" "A"
+call :ProcessFolder "D:\사진\폴더2" "B"
+call :ProcessFolder "E:\문서\폴더3" "Main_File"
+
+echo.
+echo ==================================================
+echo 모든 지정된 폴더의 작업이 완료되었습니다!
+echo ==================================================
+pause
+exit /b
+
+:: ==========================================
+:: 개별 폴더 작업을 수행하는 서브루틴 (수정하지 마세요)
+:: ==========================================
+:ProcessFolder
+set "TARGET_DIR=%~1"
+set "FIXED_NAME=%~2"
+
+if not exist "%TARGET_DIR%" (
+    echo.
+    echo [경고] 폴더를 찾을 수 없습니다: "%TARGET_DIR%"
+    exit /b
+)
+
+echo.
+echo --------------------------------------------------
+echo [작업 시작] %TARGET_DIR% (고정 이름: %FIXED_NAME%)
+echo --------------------------------------------------
+
+:: 해당 폴더로 이동 후 지역 변수 설정
+pushd "%TARGET_DIR%"
+setlocal enabledelayedexpansion
+set "LAST_RESTORED="
+
+:: 1. 기존에 이름이 변경된 파일이 있는지 확인하고 원래 이름으로 복구
+if exist "%TRACK_FILE%" (
+    set /p ORIG_NAME=<"%TRACK_FILE%"
+    
+    for %%I in ("!ORIG_NAME!") do set "ORIG_EXT=%%~xI"
+
+    if exist "%FIXED_NAME%!ORIG_EXT!" (
+        ren "%FIXED_NAME%!ORIG_EXT!" "!ORIG_NAME!"
+        set "LAST_RESTORED=!ORIG_NAME!"
+        echo [복구 완료] %FIXED_NAME%!ORIG_EXT! -^> !ORIG_NAME!
+    )
+    del /q "%TRACK_FILE%"
+)
+
+:: 2. 폴더 내 파일 목록 수집 (bat 파일, 트래킹 파일, 방금 복구된 파일 스킵)
+set /a count=0
+for %%F in (*) do (
+    set "skip="
+    if /i "%%~nxF"=="%BAT_FILE%" set skip=1
+    if /i "%%~nxF"=="%TRACK_FILE%" set skip=1
+    if /i "%%~nxF"=="!LAST_RESTORED!" set skip=1
+
+    if not defined skip (
+        set /a count+=1
+        set "file[!count!]=%%~nxF"
+    )
+)
+
+:: 대상 파일이 없는 경우 예외 처리
+if !count! equ 0 (
+    echo [안내] 변경할 수 있는 새로운 파일이 충분하지 않습니다.
+    endlocal
+    popd
+    exit /b
+)
+
+:: 3. 수집된 파일 중 무작위로 하나 선택
+set /a rand=(!RANDOM! %% count) + 1
+for %%N in (!rand!) do set "CHOSEN_FILE=!file[%%N]!"
+
+:: 4. 선택된 파일의 원래 이름을 기록하고 지정된 이름으로 변경
+echo !CHOSEN_FILE!> "%TRACK_FILE%"
+
+for %%I in ("!CHOSEN_FILE!") do set "CHOSEN_EXT=%%~xI"
+ren "!CHOSEN_FILE!" "%FIXED_NAME%!CHOSEN_EXT!"
+
+echo [변경 완료] !CHOSEN_FILE! -^> %FIXED_NAME%!CHOSEN_EXT!
+
+endlocal
+popd
+exit /b
