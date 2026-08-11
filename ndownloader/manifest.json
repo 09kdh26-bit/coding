@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "네이버 블로그 첨부파일 일괄 다운로더",
+  "version": "1.0",
+  "description": "열려있는 네이버 블로그 포스트의 첨부파일 링크를 추출하여 일괄 다운로드합니다.",
+  "permissions": [
+    "downloads",
+    "activeTab",
+    "scripting"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      width: 250px;
+      padding: 15px;
+      font-family: 'Malgun Gothic', sans-serif;
+      text-align: center;
+    }
+    h3 {
+      font-size: 14px;
+      margin-top: 0;
+      color: #333;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #03C75A;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #02b150;
+    }
+    #status {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h3>블로그 첨부파일 다운로더</h3>
+  <button id="downloadBtn">첨부파일 일괄 다운로드</button>
+  <div id="status">준비됨</div>
+  <script src="popup.js"></script>
+</body>
+</html>
