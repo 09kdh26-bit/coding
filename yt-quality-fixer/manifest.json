@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "유튜브 화질 자동 설정",
+  "version": "1.1",
+  "description": "설정한 유튜브 화질을 고정하고, 미지원 시 하위 최고 화질로 재생합니다.",
+  "permissions": ["storage"],
+  "host_permissions": ["*://*.youtube.com/*"],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.youtube.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["inject.js"],
+      "matches": ["*://*.youtube.com/*"]
+    }
+  ]
+}
