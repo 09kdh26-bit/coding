@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Steam Workshop User Filter",
+  "version": "1.0",
+  "description": "특정 유저의 스팀 창작마당 아이템을 화면에서 숨깁니다.",
+  "content_scripts": [
+    {
+      "matches": [
+        "*://steamcommunity.com/workshop/browse/*",
+        "*://steamcommunity.com/app/*/workshop*"
+      ],
+      "js": ["content.js"]
+    }
+  ]
+}
